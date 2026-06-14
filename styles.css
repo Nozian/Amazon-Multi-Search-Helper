@@ -1,0 +1,94 @@
+.multi-search-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+}
+
+.multi-search-buttons-container button,
+.multi-search-buttons-container a {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 1px solid #adb5bd;
+    border-radius: 3px;
+    background-color: #fff;
+    color: #495057;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.multi-search-buttons-container button:hover,
+.multi-search-buttons-container a:hover {
+    background-color: #e9ecef;
+    border-color: #6c757d;
+}
+
+.multi-search-buttons-container button:active,
+.multi-search-buttons-container a:active {
+    background-color: #dee2e6;
+}
+
+/* 商品詳細ページ用のスタイル */
+#dp .multi-search-buttons-container,
+#dp-container .multi-search-buttons-container {
+    margin: 15px 0;
+    padding: 12px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+/* 検索結果ページ用のスタイル */
+.s-result-item .multi-search-buttons-container {
+    margin: 8px 0;
+    padding: 6px;
+    background-color: #fff;
+}
+
+/* ほしい物リストページ用のスタイル */
+[data-item-index] .multi-search-buttons-container,
+[data-itemid] .multi-search-buttons-container {
+    margin: 8px 0;
+    padding: 6px;
+    background-color: #fff;
+}
+
+/* ボタンの種類別スタイル */
+.multi-search-buttons-container button[title*="Kindle"],
+.multi-search-buttons-container a[title*="Kindle"] {
+    background-color: #f8f9fa;
+    border-color: #ff9900;
+    color: #ff9900;
+}
+
+.multi-search-buttons-container button[title*="図書館"],
+.multi-search-buttons-container a[title*="図書館"] {
+    background-color: #f8f9fa;
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.multi-search-buttons-container button[title*="中古"],
+.multi-search-buttons-container a[title*="中古"] {
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+    .multi-search-buttons-container {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .multi-search-buttons-container button,
+    .multi-search-buttons-container a {
+        width: 100%;
+        text-align: center;
+    }
+} 
