@@ -1,0 +1,109 @@
+/* v1.1: DO NOT reflow or change Amazon's own wishlist item boxes. */
+.amtk-compare-links{display:flex!important;flex-wrap:wrap;align-items:center;gap:5px;padding:8px!important;margin:9px 0!important;background:#f6f8fb!important;border:1px solid #d5dee9!important;border-radius:8px!important;max-width:100%;box-sizing:border-box;clear:both}
+.amtk-compare-heading{font-size:11px!important;font-weight:750!important;color:#34465b!important;padding:0 4px!important}
+.amtk-compare-links a{display:inline-flex!important;padding:4px 7px!important;line-height:1.35!important;border:1px solid #c2cede!important;background:#fff!important;color:#205078!important;font-size:11px!important;border-radius:6px;text-decoration:none!important}
+.amtk-compare-links a:hover{background:#e1effb!important;text-decoration:underline!important}
+/* Hide source list only when we have successfully parsed real products into a separate mirror. */
+html.amtk-wl-hide-native #g-items{display:none!important}
+#amtk-wishlist-panel{box-sizing:border-box!important;position:relative!important;z-index:2!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:14px 0!important;padding:0!important;font:13px/1.45 system-ui,-apple-system,sans-serif!important;color:#17263a!important;clear:both!important}
+#amtk-wishlist-panel *{box-sizing:border-box!important}
+#amtk-wishlist-panel .amtk-wl-bar{border-radius:10px 10px 0 0;background:#182d45!important;color:#fff!important;padding:13px!important;display:flex!important;gap:12px!important;flex-wrap:wrap!important;justify-content:space-between!important;align-items:center!important}
+#amtk-wishlist-panel .amtk-wl-heading{display:flex!important;flex-direction:column!important;gap:5px!important;min-width:200px!important}
+#amtk-wishlist-panel .amtk-wl-heading strong{font-size:15px!important;color:#fff!important}
+#amtk-wishlist-panel .amtk-wl-heading small{color:#cdddec!important;font-size:11px!important;font-weight:400!important}
+#amtk-wishlist-panel .amtk-wl-actions{display:flex!important;flex-wrap:wrap!important;gap:5px!important;align-items:center!important}
+#amtk-wishlist-panel button,#amtk-wishlist-panel select,#amtk-wishlist-panel input{font:12px/1.35 system-ui,sans-serif!important}
+#amtk-wishlist-panel .amtk-wl-actions button,#amtk-wishlist-panel .amtk-wl-actions select{background:#f8fafc!important;color:#172c44!important;border:1px solid #c9d5e4!important;border-radius:6px!important;padding:6px 8px!important;cursor:pointer!important;min-height:30px!important;white-space:normal!important;max-width:100%!important}
+#amtk-wishlist-panel .amtk-wl-actions label{color:#f5f7fa!important;white-space:nowrap!important}
+#amtk-wishlist-panel .amtk-wl-actions .amtk-wl-primary{background:#ffd28b!important;color:#523112!important;border-color:#ffc26e!important;font-weight:700!important}
+#amtk-wishlist-panel .amtk-wl-status{font:11px/1.5 system-ui,sans-serif!important;color:#466179!important;padding:8px 12px!important;background:#edf5fb!important;border:1px solid #d8e5ed!important;border-top:0!important;white-space:normal!important}
+#amtk-wishlist-panel .amtk-wl-grid-scroll{width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;background:#f7f9fb!important;border:1px solid #dae4ed!important;border-top:0!important;border-radius:0 0 10px 10px!important;padding:10px!important}
+#amtk-wishlist-panel .amtk-wl-grid{display:grid!important;grid-template-columns:repeat(var(--amtk-effective-columns,1),minmax(0,1fr))!important;gap:10px!important;width:100%!important;max-width:100%!important;min-width:0!important;align-items:stretch!important}
+#amtk-wishlist-panel .amtk-wl-card{background:#fff!important;box-shadow:0 1px 3px rgba(0,0,0,.04)!important;border:1px solid #dce5ee!important;border-radius:9px!important;min-width:0!important;width:auto!important;height:auto!important;padding:9px!important;display:flex!important;flex-direction:column!important;gap:7px!important;float:none!important;position:relative!important;overflow:visible!important;overflow-wrap:anywhere!important}
+#amtk-wishlist-panel .amtk-wl-card[data-color="warm"]{background:#fff0d9!important}
+#amtk-wishlist-panel .amtk-wl-card[data-color="mint"]{background:#e7f7eb!important}
+#amtk-wishlist-panel .amtk-wl-card[data-color="sky"]{background:#e8f2ff!important}
+#amtk-wishlist-panel .amtk-wl-card[data-color="rose"]{background:#fff0f5!important}
+#amtk-wishlist-panel .amtk-wl-thumb{height:130px!important;min-height:130px!important;display:flex!important;justify-content:center!important;align-items:center!important;background:#fff!important;border-radius:5px!important;text-decoration:none!important}
+#amtk-wishlist-panel .amtk-wl-thumb img{display:block!important;max-width:100%!important;max-height:125px!important;object-fit:contain!important}
+#amtk-wishlist-panel .amtk-image-missing{color:#97a5b4!important;font-size:11px!important}
+#amtk-wishlist-panel .amtk-wl-title{font-size:12px!important;font-weight:650!important;line-height:1.5!important;display:block!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;min-height:0!important;color:#244665!important;text-decoration:none!important}
+#amtk-wishlist-panel .amtk-wl-title:hover{text-decoration:underline!important}
+#amtk-wishlist-panel .amtk-wl-price{color:#a33e2b!important;font-weight:750!important;font-size:13px!important}
+#amtk-wishlist-panel .amtk-wl-quick{display:flex!important;flex-wrap:wrap!important;gap:4px!important}
+#amtk-wishlist-panel .amtk-wl-chip{display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#ecf3f9!important;color:#285272!important;border:1px solid #cbd9e5!important;border-radius:4px!important;padding:3px 5px!important;font-size:10px!important;cursor:pointer!important}
+#amtk-wishlist-panel .amtk-wl-search{display:flex!important;flex-wrap:wrap!important;gap:4px!important;margin-top:auto!important}
+#amtk-wishlist-panel .amtk-wl-search select{flex:1 1 70px!important;width:100px!important;min-width:0!important;background:#fff!important;border:1px solid #bfcddc!important;padding:4px!important;border-radius:5px!important}
+#amtk-wishlist-panel .amtk-wl-search button{width:100%!important;padding:5px!important;background:#e7f0fb!important;color:#244a69!important;border:1px solid #b5cce2!important;border-radius:5px!important;cursor:pointer!important}
+#amtk-wishlist-panel .amtk-wl-edit{display:flex!important;flex-wrap:wrap!important;gap:4px!important;border-top:1px solid #e3e7ee!important;padding-top:6px!important}
+#amtk-wishlist-panel .amtk-wl-edit input{min-width:70px!important;width:75px!important;flex:1 1 auto!important;padding:5px!important;border:1px solid #b9cbd8!important;border-radius:5px!important;background:#fff!important;color:#172b44!important}
+#amtk-wishlist-panel .amtk-wl-edit select{flex:0 1 65px!important;padding:4px!important;border:1px solid #b9cbd8!important;border-radius:5px!important;background:#fff!important;color:#172b44!important}
+#amtk-wishlist-panel .amtk-wl-empty{grid-column:1/-1!important;min-width:0!important;text-align:center!important;padding:40px 20px!important;background:#fff!important;color:#52667a!important}
+#amtk-wl-modal{position:fixed!important;inset:0!important;background:rgba(15,30,45,.63)!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:2147483647!important}
+#amtk-wl-modal .amtk-wl-modal-content{background:#fff!important;padding:22px!important;border-radius:12px!important;width:min(800px,92vw)!important;box-shadow:0 6px 24px #0005!important}
+#amtk-wl-modal textarea{width:100%!important;resize:vertical!important;font:12px monospace!important;padding:10px!important;border:1px solid #adbdcc!important}
+#amtk-wl-modal button{margin-top:10px!important;padding:8px 14px!important}
+
+/* v1.2: narrow browsers and vertical-tab layouts: no inner horizontal scrolling or clipped titles. */
+#amtk-wishlist-panel .amtk-wl-effective{display:inline-block!important;margin-left:6px!important;font-size:11px!important;color:#dce9fa!important;font-weight:400!important;white-space:nowrap!important}
+#amtk-wishlist-panel .amtk-wl-grid-scroll,#amtk-wishlist-panel .amtk-wl-grid,#amtk-wishlist-panel .amtk-wl-card{min-width:0!important;max-width:100%!important}
+@media(max-width:750px){#amtk-wishlist-panel .amtk-wl-bar{padding:9px!important;gap:8px!important}#amtk-wishlist-panel .amtk-wl-heading{min-width:0!important}#amtk-wishlist-panel .amtk-wl-grid-scroll{padding:6px!important}#amtk-wishlist-panel .amtk-wl-grid{gap:7px!important}#amtk-wishlist-panel .amtk-wl-card{padding:7px!important}}
+
+/* v1.4: exactly the number of columns selected by the user, no inner scroll. */
+#amtk-wishlist-panel .amtk-wl-grid{grid-template-columns:repeat(var(--amtk-effective-columns,6),minmax(0,1fr))!important;gap:8px!important}
+#amtk-wishlist-panel .amtk-wl-card{overflow-wrap:anywhere!important;word-break:normal!important;min-width:0!important;overflow:visible!important}
+#amtk-wishlist-panel .amtk-wl-used{display:flex!important;flex-wrap:wrap!important;gap:2px 5px!important;padding:6px!important;border:1px solid #e6d9bc!important;border-radius:6px!important;background:#fffaf0!important;font:11px/1.4 system-ui,sans-serif!important;max-width:100%!important;min-width:0!important;overflow-wrap:anywhere!important}
+#amtk-wishlist-panel .amtk-wl-used strong{color:#71552f!important;font-size:11px!important;min-width:0!important;width:100%!important}
+#amtk-wishlist-panel .amtk-wl-used-price{font-weight:750!important;color:#824316!important}
+#amtk-wishlist-panel .amtk-wl-used-shipping{color:#675335!important}
+#amtk-wishlist-panel .amtk-wl-used-total{font-weight:750!important;color:#395b29!important}
+#amtk-wishlist-panel .amtk-wl-used-unknown{color:#74654f!important}
+#amtk-wishlist-panel .amtk-wl-used-actions{display:flex!important;flex-wrap:wrap!important;gap:4px!important;align-items:center!important;min-width:0!important}
+#amtk-wishlist-panel .amtk-wl-used-actions button,#amtk-wishlist-panel .amtk-wl-used-actions a{display:inline-block!important;flex:1 1 65px!important;min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;padding:5px 3px!important;border-radius:5px!important;font-size:10px!important;line-height:1.35!important;background:#f7f1e6!important;border:1px solid #decba7!important;color:#5d462e!important;text-align:center!important;text-decoration:none!important;cursor:pointer!important}
+#amtk-wishlist-panel .amtk-wl-used-actions button:disabled{opacity:.6!important;cursor:progress!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-card{padding:5px!important;gap:5px!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-thumb{height:90px!important;min-height:90px!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-thumb img{max-height:85px!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-title{font-size:11px!important;line-height:1.4!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-quick{gap:3px!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-chip{font-size:9px!important;padding:3px!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-edit input{min-width:0!important;width:100%!important;flex:1 1 100%!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-edit select{min-width:0!important;width:100%!important;flex:1 1 100%!important}
+#amtk-wishlist-panel .amtk-wl-grid.amtk-wl-dense .amtk-wl-search select{width:100%!important;flex:1 1 100%!important}
+
+#amtk-wishlist-panel .amtk-wl-more{width:100%!important;min-width:0!important;border-top:1px solid #e4ebf0!important;padding-top:5px!important;margin-top:auto!important}
+#amtk-wishlist-panel .amtk-wl-more summary{font-size:10px!important;font-weight:600!important;color:#355878!important;cursor:pointer!important;overflow-wrap:anywhere!important;list-style:revert!important}
+#amtk-wishlist-panel .amtk-wl-more[open] .amtk-wl-search{margin-top:8px!important}
+#amtk-wishlist-panel .amtk-wl-more[open] .amtk-wl-edit{margin-top:8px!important}
+
+#amtk-wishlist-panel .amtk-wl-used-hint{color:#736552!important;font-size:10px!important}
+#amtk-wishlist-panel .amtk-wl-checked{display:block!important;width:100%!important;color:#82735b!important;font-size:10px!important}
+
+/* v1.5: searchable results without an inner scroll; fixed user-selected columns. */
+#amtk-wishlist-panel .amtk-wl-finder{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px!important;border:1px solid #d8e5ed!important;border-top:0!important;background:#f9fbfd!important;padding:9px 12px!important}
+#amtk-wishlist-panel .amtk-wl-query{flex:1 1 210px!important;min-width:0!important;width:auto!important;max-width:100%!important;border:1px solid #b9cadb!important;background:#fff!important;color:#1c2d41!important;border-radius:6px!important;min-height:35px!important;padding:7px 10px!important;font-size:13px!important}
+#amtk-wishlist-panel .amtk-wl-filter{flex:0 1 155px!important;max-width:100%!important;min-width:0!important;background:#fff!important;color:#1c2d41!important;border:1px solid #b9cadb!important;border-radius:6px!important;min-height:35px!important;padding:5px 6px!important}
+#amtk-wishlist-panel .amtk-wl-match-count{font-size:11px!important;color:#395672!important;white-space:nowrap!important}
+#amtk-wishlist-panel .amtk-wl-clear{background:#e5edf7!important;color:#294765!important;padding:7px!important;border:1px solid #becddf!important;min-height:35px!important}
+#amtk-wishlist-panel .amtk-wl-view-limit{font-size:11px!important;color:#66768a!important;margin:6px 3px!important}
+#amtk-wishlist-panel .amtk-wl-card[hidden]{display:none!important}
+
+/* v1.6: long descriptions and AI meaning search, no nested scrolling. */
+#amtk-wishlist-panel .amtk-wl-description{font-size:11px!important;border-top:1px solid #e2e9f0!important;padding-top:5px!important;max-width:100%!important;min-width:0!important}
+#amtk-wishlist-panel .amtk-wl-description summary{cursor:pointer!important;color:#25587e!important;overflow-wrap:anywhere!important}
+#amtk-wishlist-panel .amtk-wl-description p{white-space:pre-wrap!important;overflow-wrap:anywhere!important;margin:6px 0!important;line-height:1.55!important;color:#263f51!important}
+#amtk-wishlist-panel .amtk-wl-description-unknown{font-size:10px!important;color:#8c7065!important}
+#amtk-wishlist-panel .amtk-wl-ai-bar{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important;padding:10px 12px!important;background:#eef5fa!important;border:1px solid #cddfeb!important;border-top:0!important;min-width:0!important}
+#amtk-wishlist-panel .amtk-wl-ai-bar button{border:1px solid #b9cadb!important;border-radius:6px!important;cursor:pointer!important;min-height:34px!important;padding:6px 10px!important}
+#amtk-wishlist-panel .amtk-wl-ai-query{flex:1 1 260px!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;min-height:35px!important;border:1px solid #a2bdd1!important;background:#fff!important;color:#152a41!important;border-radius:6px!important;padding:7px 10px!important}
+#amtk-wishlist-panel .amtk-wl-ai-status{flex:1 1 100%!important;font-size:11px!important;color:#37576a!important;overflow-wrap:anywhere!important}
+#amtk-wishlist-panel .amtk-wl-ai-reason{font-size:11px!important;line-height:1.45!important;padding:5px!important;background:#e9f6ff!important;color:#214b70!important;border:1px solid #bdddf3!important;border-radius:5px!important;overflow-wrap:anywhere!important}
+
+/* v1.8: floating emergency stop. Independent of the Amazon wishlist scroll position. */
+#amtk-wl-floating-stop{position:fixed!important;right:max(14px,env(safe-area-inset-right,0px))!important;bottom:max(20px,env(safe-area-inset-bottom,0px))!important;z-index:2147483000!important;display:flex!important;gap:10px!important;align-items:center!important;flex-wrap:wrap!important;justify-content:space-between!important;box-sizing:border-box!important;width:min(380px,calc(100vw - 28px))!important;max-width:calc(100vw - 28px)!important;padding:11px!important;border-radius:12px!important;background:#182d45!important;color:#fff!important;box-shadow:0 8px 30px #0008!important;border:1px solid #6c8299!important;font:600 13px/1.4 system-ui,sans-serif!important;pointer-events:auto!important}
+#amtk-wl-floating-stop .amtk-wl-float-progress{flex:1 1 110px!important;font-size:12px!important;color:#fff!important;min-width:0!important;overflow-wrap:anywhere!important}
+#amtk-wl-floating-stop .amtk-wl-float-button{flex:1 1 auto!important;box-sizing:border-box!important;min-height:44px!important;border:1px solid #e87867!important;border-radius:9px!important;background:#d94c3a!important;color:#fff!important;font:750 14px/1.4 system-ui,sans-serif!important;padding:8px 14px!important;cursor:pointer!important;box-shadow:0 2px 6px #0003!important}
+#amtk-wl-floating-stop .amtk-wl-float-button:focus-visible{outline:3px solid #ffd28b!important;outline-offset:3px!important}
+#amtk-wl-floating-stop .amtk-wl-float-button:disabled{opacity:.75!important;cursor:wait!important}
+#amtk-wl-floating-stop[data-state="paused"] .amtk-wl-float-button{background:#e9f6ff!important;color:#16344e!important;border-color:#bfdaf0!important}
+@media(max-width:520px){#amtk-wl-floating-stop{right:9px!important;bottom:10px!important;width:min(340px,calc(100vw - 18px))!important}}

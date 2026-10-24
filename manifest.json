@@ -1,14 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "Amazon Multi-Search Helper",
-  "version": "1.0.0",
-  "description": "Amazonの商品ページで他書店の検索リンクを表示します。紀伊國屋、honto、TSUTAYA、ヨドバシ、ブックオフ、メルカリなどで簡単に検索できます。",
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+  "name": "Amazon Toolkit — 検索・書店比較・ほしい物整理",
+  "short_name": "AMZ Toolkit",
+  "version": "1.8.0",
+  "description": "Amazon横断検索・ほしい物リスト整理、固定列数、中古価格、説明文検索、任意のGemini AI意味検索、CSV出力。",
+  "permissions": [
+    "tabs",
+    "storage",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://www.amazon.co.jp/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
   },
   "action": {
+    "default_title": "Amazon Toolkit",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -16,24 +25,38 @@
       "128": "icons/icon128.png"
     }
   },
-  "permissions": [
-    "storage"
-  ],
-  "host_permissions": [
-    "https://www.amazon.co.jp/*"
-  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
-      "matches": ["https://www.amazon.co.jp/*"],
-      "js": ["content_amazon.js"],
-      "css": ["styles.css"]
+      "matches": [
+        "https://www.amazon.co.jp/*"
+      ],
+      "js": [
+        "sites.js",
+        "pricing-utils.js",
+        "description-utils.js",
+        "content_amazon.js",
+        "content_wishlist.js"
+      ],
+      "css": [
+        "amazon.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.amazon.co.jp/dp/*",
+        "https://www.amazon.co.jp/gp/product/*"
+      ],
+      "js": [
+        "content_description_page.js"
+      ],
+      "run_at": "document_idle"
     }
   ],
-  "options_page": "options.html",
-  "web_accessible_resources": [
-    {
-      "resources": ["icons/*"],
-      "matches": ["https://www.amazon.co.jp/*"]
-    }
-  ]
+  "options_page": "options.html"
 }

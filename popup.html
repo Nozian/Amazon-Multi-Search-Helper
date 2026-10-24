@@ -1,130 +1,41 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>Amazon Multi-Search Helper</title>
-    <style>
-        body {
-            width: 300px;
-            padding: 15px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-        .container {
-            text-align: center;
-        }
-        h1 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin: 5px;
-            font-size: 14px;
-        }
-        .button:hover {
-            background: #0056b3;
-        }
-        .version {
-            font-size: 12px;
-            color: #666;
-            margin-top: 15px;
-        }
-        .lang-separator {
-            color: #666;
-            margin: 0 5px;
-        }
-        .description {
-            margin-bottom: 15px;
-            line-height: 1.5;
-            color: #333;
-        }
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .settings-button {
-            background-color: #007bff;
-            color: white;
-        }
-        .settings-button:hover {
-            background-color: #0056b3;
-        }
-        .note-button {
-            background-color: #2cb696;
-            color: white;
-        }
-        .note-button:hover {
-            background-color: #249c7d;
-        }
-        .notion-button {
-            background-color: #000000;
-            color: white;
-        }
-        .notion-button:hover {
-            background-color: #333333;
-        }
-        .coffee-button {
-            background-color: #28a745;
-            color: white;
-        }
-        .coffee-button:hover {
-            background-color: #218838;
-        }
-        .webapp-button {
-            background-color: #6c757d;
-            color: white;
-        }
-        .webapp-button:hover {
-            background-color: #5a6268;
-        }
-        .twitter-button {
-            background-color: #1DA1F2;
-        }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amazon Toolkit</title>
+<link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Amazon Multi-Search Helper</h1>
-        <div class="description">
-            Amazonの商品ページで他書店の検索リンクを表示します。<br>
-            Display search links for other bookstores on Amazon product pages.
-        </div>
-        <div class="button-container">
-            <button id="openOptions" class="settings-button">設定を開く / Open Settings</button>
-            <button id="openNotion" class="notion-button">開発ログを見る / View Development Log</button>
-            <button id="openTwitter" class="twitter-button">Twitterでフォロー / Follow on Twitter</button>
-            <button id="openWebApp" class="webapp-button">ウェブアプリを開く / Open Web App</button>
-        </div>
-        <div class="version">
-            Version 1.0.0
-        </div>
-    </div>
-    <script src="popup.js"></script>
+<header><div class="mark">A<span>+</span></div><div><div class="eyebrow">YOUR SHOPPING WORKSPACE</div><h1>Amazon Toolkit</h1><p>見つける・比べる・整理する</p></div></header>
+<main>
+<section class="panel">
+ <div class="section-head"><div><h2>検索タブを一括変換</h2><p>Google / DuckDuckGo → Amazon.co.jp</p></div><div class="num" id="count">—</div></div>
+ <div class="button-row"><button id="convert" class="primary" disabled>Amazon検索に変換</button><button id="undo" class="secondary" disabled>元に戻す</button></div>
+ <details><summary>変換対象のキーワードを表示</summary><ul id="preview" class="preview"></ul></details>
+ <button id="refresh" class="mini">↻ タブを再確認</button>
+</section>
+<section class="panel settings">
+ <h2>Amazon内の機能</h2>
+ <div class="toggle-row"><div><strong>他サイトで探す</strong><p>書店・図書館・中古市場へ横断検索</p></div><label class="switch"><input type="checkbox" id="compareEnabled"><span></span></label></div>
+ <div class="toggle-row"><div><strong>ほしい物リスト整理</strong><p>カード表示・タグ・CSV・AI分析</p></div><label class="switch"><input type="checkbox" id="wishlistEnabled"><span></span></label></div>
+ <div class="toggle-row"><div><strong>中古価格と送料を自動確認</strong><p>ページを開くと複数商品を並列照合。確認できない場合は理由を表示</p></div><label class="switch"><input type="checkbox" id="autoUsedEnabled"><span></span></label></div>
+ <div class="cols"><label for="wishlistCols">グリッドの列数（指定した数で表示）</label><select id="wishlistCols"><option value="1">1列</option><option value="2">2列</option><option value="3">3列</option><option value="4">4列</option><option value="5">5列</option><option value="6">6列</option><option value="7">7列</option><option value="8">8列</option><option value="9">9列</option><option value="10">10列</option></select></div>
+ <div class="cols"><label for="priceConcurrency">中古価格の同時照合数</label><select id="priceConcurrency"><option value="1">1件（控えめ）</option><option value="2">2件（推奨）</option><option value="3">3件（速め）</option></select></div>
+ <p class="note">Amazonのアクセス制限時は照合を自動停止します。検索欄は、Amazonのほしい物リスト画面の上部に表示されます。</p>
+ <button id="sites" class="settings-link">検索先サイトを選ぶ <span>↗</span></button>
+</section>
+<section class="panel settings">
+ <h2>AI意味検索（任意）</h2>
+ <p class="note">Gemini APIキーを設定すると、ほしい物リスト内で自然文から意味検索できます。商品名・説明・タグは「AIで意味検索」を押したときだけGoogleに送信。利用料金・利用制限はGoogle側の契約によります。</p>
+ <div class="cols"><label for="aiModel">AIモデル</label><select id="aiModel"><option value="gemini-2.5-flash">Gemini 2.5 Flash</option><option value="gemini-3.5-flash">Gemini 3.5 Flash</option></select></div>
+ <label for="aiApiKey">Gemini APIキー（このブラウザを閉じるまで一時保存）</label>
+ <input id="aiApiKey" type="password" placeholder="APIキーを貼り付け" autocomplete="off" spellcheck="false" style="width:100%;box-sizing:border-box;padding:10px;background:#fff;border:1px solid #b9cbd8;border-radius:7px;color:#182c41;margin-top:6px;">
+ <div class="button-row"><button id="saveAiKey" class="primary">AIキーを一時設定</button><button id="clearAiKey" class="secondary">AIキーを削除</button></div>
+ <p class="note" id="aiKeyStatus">キー未設定。通常検索と商品説明の収集はキー不要です。</p>
+</section>
+<p id="status" role="status" aria-live="polite"></p>
+</main>
+<footer>個人用・非公式拡張機能 <span>v1.7.0</span></footer>
+<script src="search-utils.js"></script><script src="popup.js"></script>
 </body>
-</html> 
+</html>
