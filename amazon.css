@@ -107,3 +107,10 @@ html.amtk-wl-hide-native #g-items{display:none!important}
 #amtk-wl-floating-stop .amtk-wl-float-button:disabled{opacity:.75!important;cursor:wait!important}
 #amtk-wl-floating-stop[data-state="paused"] .amtk-wl-float-button{background:#e9f6ff!important;color:#16344e!important;border-color:#bfdaf0!important}
 @media(max-width:520px){#amtk-wl-floating-stop{right:9px!important;bottom:10px!important;width:min(340px,calc(100vw - 18px))!important}}
+
+/* Search results only: compact in-flow controls; no card-height overflow. */
+.amtk-compare-links.amtk-compare-compact{display:flex!important;flex-flow:row wrap!important;align-items:center!important;justify-content:flex-start!important;gap:4px!important;position:static!important;float:none!important;clear:none!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;box-sizing:border-box!important;margin:4px 0!important;padding:4px!important;overflow:hidden!important;z-index:auto!important}
+.amtk-compare-compact .amtk-compare-select,.amtk-compare-compact .amtk-compare-open{position:static!important;box-sizing:border-box!important;min-width:0!important;max-width:100%!important;height:28px!important;min-height:28px!important;margin:0!important;font:12px/1.2 Arial,sans-serif!important;padding:3px 5px!important;color:#205078!important;background:#fff!important;border:1px solid #c2cede!important;border-radius:5px!important;box-shadow:none!important}
+.amtk-compare-compact .amtk-compare-select{flex:1 1 72px!important;width:0!important;appearance:auto!important;display:block!important}
+.amtk-compare-compact .amtk-compare-open{flex:0 1 auto!important;cursor:pointer!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.amtk-compare-compact .amtk-compare-open:hover{background:#e1effb!important}
