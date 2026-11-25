@@ -43,6 +43,41 @@
     }
     container.appendChild(bar);
   }
+  // Search cards use fixed-height outer wrappers. Never append a comparison
+  // bar after the card: it can spill into the following result row.
+  function addSearchCardLinks(item){
+    const title=getTitle(item,searchTitleSelectors);
+    const heading=item.querySelector('h2');
+    if(!title||!heading)return;
+    const anchor=heading.closest('a')||heading;
+    const parent=anchor.parentElement;
+    if(!parent||!item.contains(parent)||parent===item||parent.closest('a,button')||item.querySelector('.'+ITEM_CLASSES))return;
+    const clean=cleanBookTitle(title);
+    if(!clean)return;
+    const chosen=Array.isArray(config.preferredSites)?config.preferredSites:DEFAULT_SITES;
+    const sites=SITES.filter(site=>chosen.includes(site.id));
+    if(!sites.length)return;
+    const bar=document.createElement('div');
+    bar.className=ITEM_CLASSES+' amtk-compare-compact';
+    bar.setAttribute('aria-label','ほかのサイトで探す');
+    const select=document.createElement('select');
+    select.className='amtk-compare-select';
+    select.setAttribute('aria-label','検索先を選ぶ');
+    for(const site of sites){
+      const option=document.createElement('option');
+      option.value=site.id;option.textContent=site.name;select.append(option);
+    }
+    const button=document.createElement('button');
+    button.type='button';button.className='amtk-compare-open';button.textContent='ほかで探す ↗';
+    button.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();
+      const site=sites.find(s=>s.id===select.value);
+      if(site)window.open(siteUrl(site,clean),'_blank','noopener,noreferrer');
+    });
+    bar.append(select,button);
+    // Insert inside the title's normal document flow, before price/cart controls.
+    anchor.after(bar);
+  }
   function scan(){
     if(scanning||!document.body) return;
     scanning=true;
@@ -64,9 +99,11 @@
           addLinks(title,item.querySelector('.sc-list-item-content')||item);
         });
       }else if(location.pathname==='/s'||location.pathname.startsWith('/s/')){
-        document.querySelectorAll('.s-result-item[data-component-type="s-search-result"], div[data-asin][data-index]').forEach(item=>{
-          const title=getTitle(item,searchTitleSelectors);
-          addLinks(title,item.querySelector('.a-section.a-spacing-small.a-spacing-top-small, .sg-col-inner')||item);
+        const primary='.s-result-item[data-component-type="s-search-result"]';
+        const cards=document.querySelectorAll(primary);
+        if(cards.length)cards.forEach(addSearchCardLinks);
+        else document.querySelectorAll('div[data-asin][data-index]').forEach(item=>{
+          if(!item.parentElement?.closest('div[data-asin][data-index]'))addSearchCardLinks(item);
         });
       }
     }finally{scanning=false;}
@@ -74,7 +111,7 @@
   function schedule(){clearTimeout(debounceTimer);debounceTimer=setTimeout(scan,380);}
   chrome.storage.sync.get(defaults).then(data=>{config={...defaults,...data};schedule();});
   chrome.storage.onChanged.addListener((changes,area)=>{
-    if(area!=='sync') return;
+    if(area!=='sync'||(!changes.amtkCompareEnabled&&!changes.preferredSites)) return;
     if(changes.amtkCompareEnabled)config.amtkCompareEnabled=changes.amtkCompareEnabled.newValue;
     if(changes.preferredSites)config.preferredSites=changes.preferredSites.newValue;
     // Remove stale buttons so changes in enabled site list take effect.
