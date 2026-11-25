@@ -81,5 +81,13 @@
     document.querySelectorAll(`.${ITEM_CLASSES}`).forEach(el=>el.remove());
     schedule();
   });
-  new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
+  // Wishlist has its own collector; avoid observing its mirror grid twice.
+  if(!isWishlist()){
+    new MutationObserver(mutations=>{
+      if(document.hidden)return;
+      if(mutations.some(m=>!m.target?.closest?.('.amtk-compare-links') &&
+        [...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&!n.matches?.('.amtk-compare-links'))))schedule();
+    }).observe(document.documentElement,{childList:true,subtree:true});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
+  }
 })();
