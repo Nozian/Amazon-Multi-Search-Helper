@@ -7,6 +7,9 @@
   const NOTES = 'amtkWishlistNotes';
   const DESC_KEY = 'amtkDescriptionsV16';
   const DESCRIPTION_BATCH = 30;
+  const GRID_PAGE_SIZE = 60;
+  let gridPage = 0;
+  let priceOptIn = false; // Explicit start per tab.
   const PRICE_CACHE = 'amtkUsedOffersV14';
   const PRICE_START_GAP_MS = 1100; // Minimum spacing between launching concurrent item checks.
   const PRICE_TTL_MS = {ok:12*3600e3, unavailable:2*3600e3, blocked:20*60e3, error:30*60e3};
@@ -28,6 +31,9 @@
   const priceControllers=new Set();
   let descriptionController=null;
   let renderTimer=0;
+  let scanTimer=0;
+  let filterRefreshTimer=0;
+  let lastFilterKey='';
   let saveTimer=0;
   let lastSignature='';
   let lastError='';
@@ -213,7 +219,7 @@
         blocked:'Amazon側のアクセス制限で確認を中断しています',
         error:'Amazonとの通信で確認できませんでした',
         noasin:'商品番号が不明で自動確認できません'};
-      box.append(el('span','amtk-wl-used-unknown',texts[item.usedState]||'中古情報を自動確認します…'));
+      box.append(el('span','amtk-wl-used-unknown',(priceOptIn?texts[item.usedState]:(!['loading','waiting'].includes(item.usedState)?texts[item.usedState]:''))||'中古価格は照合開始後に確認します'));
     }
     if(item.usedSource)box.title=`取得元: ${item.usedSource}（購入時の価格とは異なる場合があります）`;
     if(item.usedCheckedAt){
@@ -234,7 +240,7 @@
       node.querySelector('.amtk-wl-used')?.replaceWith(usedLine(record));
       if(filterMode!=='all'||filterText.trim()){
         if(isEditingCard())pendingEditorRefresh=true;
-        else renderFilteredGrid();
+        else {clearTimeout(filterRefreshTimer);filterRefreshTimer=setTimeout(()=>{if(!isEditingCard())renderFilteredGrid();else pendingEditorRefresh=true;},350);}
       }
       break;
     }
@@ -257,7 +263,7 @@
     },450);
   }
   function scheduleAutoPrices(){
-    if(!settings.amtkAutoUsedEnabled||!currentId||userPaused)return;
+    if(!priceOptIn||!settings.amtkAutoUsedEnabled||!settings.amtkWishlistEnabled||!currentId||userPaused||collecting||fetchingDescriptions||document.hidden)return;
     if(pricePausedUntil>Date.now())return;
     for(const item of entries.values()){
       const asin=typeof AMTKUsed!=='undefined'?AMTKUsed.asinFrom(item.url):'';
@@ -283,10 +289,10 @@
   }
   function updatePricingStatus(){
     updateFloatingStop();
-    if(collecting || fetchingDescriptions || userPaused)return; // Preserve collection / stop messages.
+    if(!priceOptIn || collecting || fetchingDescriptions || userPaused)return; // Preserve collection / stop messages.
     const unresolved=priceQueue.length;
     const running=priceActive.size;
-    const parallel=Math.min(3,Math.max(1,Number(settings.amtkPriceConcurrency)||2));
+    const parallel=1;
     const verified=[...entries.values()].filter(x=>x.usedPrice).length;
     const total=entries.size;
     const note=pricePausedUntil>Date.now()?' / Amazonのアクセス制限により一時停止':unresolved||running?' / 並列照合中':' / 照合済み';
@@ -363,11 +369,11 @@
     if(priceLoopRunning)return;
     priceLoopRunning=true;
     try{
-      while(settings.amtkAutoUsedEnabled && !userPaused && (priceQueue.length || priceActive.size)){
+      while(priceOptIn && settings.amtkAutoUsedEnabled && settings.amtkWishlistEnabled && !userPaused && !collecting && !fetchingDescriptions && (priceQueue.length || priceActive.size)){
         if(pricePausedUntil>Date.now())break;
         // Pause starting new network calls in background tabs.
         if(document.hidden){await sleep(550);continue;}
-        const concurrency=Math.min(3,Math.max(1,Number(settings.amtkPriceConcurrency)||2));
+        const concurrency=1;
         if(priceQueue.length && priceActive.size<concurrency){
           const gap=Math.max(0,PRICE_START_GAP_MS-(Date.now()-lastPriceStartedAt));
           if(gap){await sleep(Math.min(gap,250));continue;}
@@ -476,13 +482,18 @@
       surface.dataset.state='running';
     }
   }
+  function pausePriceWork(){
+    priceOptIn=false;
+    priceQueue=[];queueSet.clear();
+    for(const controller of priceControllers)controller.abort();
+  }
   function stopAll(){
     if(!(collecting||fetchingDescriptions||priceActive.size||priceQueue.length))return;
     lastStoppedTask=collecting?'list':fetchingDescriptions?'descriptions':'prices';
     abortCollection=true;
     stopDescriptions=true;
     userPaused=true;
-    priceQueue=[];queueSet.clear();
+    pausePriceWork();
     descriptionController?.abort();
     for(const controller of priceControllers)controller.abort();
     status(`停止を受け付けました。取得済み ${entries.size}件は保存されます。`);
@@ -492,17 +503,22 @@
   }
   function resumePriceChecks(){
     if(collecting||fetchingDescriptions)return;
+    priceOptIn=true;
     userPaused=false;
     abortCollection=false;
     stopDescriptions=false;
-    status('中古価格の照合を再開しました。');
+    status('中古価格の照合を開始しました（1件ずつ）。');
+    if(!settings.amtkAutoUsedEnabled){
+      settings.amtkAutoUsedEnabled=true;
+      void chrome.storage.sync.set({amtkAutoUsedEnabled:true}).catch(()=>{});
+    }
     scheduleAutoPrices();
     updateFloatingStop();
     drawSoon();
   }
   function status(text){
     collectionLog=text;
-    const t=document.getElementById('amtk-wl-status');if(t)t.textContent=text;
+    const t=document.getElementById('amtk-wl-status');if(t&&t.textContent!==text)t.textContent=text;
   }
   function isEditingCard(){
     const active=document.activeElement;
@@ -613,7 +629,7 @@
     if(collecting)return;
     collecting=true;abortCollection=false;
     userPaused=false;stopDescriptions=false;
-    scheduleAutoPrices();updateFloatingStop();
+    pausePriceWork();updateFloatingStop();
     const previousScroll=window.scrollY;
     const oldNative=nativeVisible;
     setNativeVisibility(true);
@@ -666,8 +682,10 @@
     if(aiMatches && !aiMatches.has(item.id))return false;
     const n=getNote(item.id);
     const words=normalized(filterText).trim().split(/\s+/).filter(Boolean);
-    const haystack=normalized([item.title,item.price,item.usedPrice,item.usedShipping,item.usedCondition,item.description,n.tag,colors[n.color]||'',item.id].join(' '));
-    if(!words.every(word=>haystack.includes(word)))return false;
+    if(words.length){
+      const haystack=normalized([item.title,item.price,item.usedPrice,item.usedShipping,item.usedCondition,item.description,n.tag,colors[n.color]||'',item.id].join(' '));
+      if(!words.every(word=>haystack.includes(word)))return false;
+    }
     if(filterMode==='priced')return !!item.usedPrice;
     if(filterMode==='total')return !!item.usedTotal;
     if(filterMode==='unpriced')return !item.usedPrice;
@@ -677,12 +695,17 @@
   function renderFilteredGrid(){
     const grid=panel?.querySelector('.amtk-wl-grid');
     if(!grid)return;
+    const filterKey=JSON.stringify([filterText,filterMode,aiQuery,!!aiMatches]);
+    if(filterKey!==lastFilterKey){gridPage=0;lastFilterKey=filterKey;}
     const matching=rows().filter(itemMatches);
     if(aiMatches)matching.sort((a,b)=>(aiMatches.get(b.id)?.score||0)-(aiMatches.get(a.id)?.score||0));
     const results=panel.querySelector('#amtk-wl-match-count');
     if(results)results.textContent=`${matching.length}件ヒット / ${entries.size}件収集済み${aiMatches?'（AI候補）':''}`;
+    const pages=Math.max(1,Math.ceil(matching.length/GRID_PAGE_SIZE));
+    gridPage=Math.max(0,Math.min(gridPage,pages-1));
+    const start=gridPage*GRID_PAGE_SIZE;
     const chunk=document.createDocumentFragment();
-    for(const record of matching.slice(0,2000)){
+    for(const record of matching.slice(start,start+GRID_PAGE_SIZE)){
       const c=card(record);
       if(aiMatches?.has(record.id)){
         const match=aiMatches.get(record.id);
@@ -694,7 +717,13 @@
     if(!matching.length)chunk.append(el('div','amtk-wl-empty',entries.size?'該当する商品はありません。キーワードや絞り込み条件を変更してください。':'Amazonの商品情報をまだ取得できていません。'));
     grid.replaceChildren(chunk);
     const limit=panel.querySelector('#amtk-wl-view-limit');
-    if(limit)limit.textContent=matching.length>2000?'表示を軽くするため検索結果の先頭2000件を表示。CSV・AI出力には収集済み全件を含みます。':'';
+    if(limit){
+      const previous=btn('← 前の60件',()=>{gridPage--;renderFilteredGrid();grid.scrollIntoView({block:'start'});});
+      const next=btn('次の60件 →',()=>{gridPage++;renderFilteredGrid();grid.scrollIntoView({block:'start'});});
+      previous.disabled=gridPage===0;next.disabled=gridPage>=pages-1;
+      limit.replaceChildren(previous,el('span','',` ${matching.length?start+1:0}〜${Math.min(start+GRID_PAGE_SIZE,matching.length)}件 / ${matching.length}件（${gridPage+1}/${pages}ページ） `),next);
+      limit.hidden=pages<=1;
+    }
   }
   function asinOfItem(item){return typeof AMTKUsed!=='undefined'?AMTKUsed.asinFrom(item.url):'';}
   async function fetchDescription(asin,signal){
@@ -725,7 +754,7 @@
     }
     if(!targets.length){status('未収集の説明文はありません。取得できない商品は24時間後に再試行できます。');return;}
     fetchingDescriptions=true;stopDescriptions=false;abortCollection=false;userPaused=false;lastSignature='';drawSoon();
-    updateFloatingStop();scheduleAutoPrices();
+    pausePriceWork();updateFloatingStop();
     let added=0,failed=0,blocked=false;
     const batch=targets.slice(0,DESCRIPTION_BATCH);
     for(let i=0;i<batch.length&&!stopDescriptions;i++){
@@ -792,7 +821,7 @@
     if(!settings.amtkWishlistEnabled){clearPanel();floatingStop?.remove();floatingStop=null;return;}
     updateFloatingStop();
     makePanel();if(!panel)return;
-    const signature=`${currentId}|${entries.size}|${dataRevision}|${settings.amtkWishlistCols}|${nativeVisible}|${collecting}|${fetchingDescriptions}|${userPaused}|${lastError}`;
+    const signature=`${currentId}|${entries.size}|${dataRevision}|${settings.amtkWishlistCols}|${nativeVisible}|${collecting}|${fetchingDescriptions}|${userPaused}|${priceOptIn}|${lastError}`;
     // Rebuild only when actual data or configuration changed; avoid MutationObserver loops.
     if(lastSignature===signature&&panel.querySelector('.amtk-wl-grid')){
       const t=panel.querySelector('#amtk-wl-status');if(t&&collectionLog)t.textContent=collectionLog;
@@ -825,12 +854,8 @@
     cols.addEventListener('change',()=>chrome.storage.sync.set({amtkWishlistCols:Number(cols.value)}));
     const effective=el('small','amtk-wl-effective','指定列数で表示');
     label.append(cols,effective);actions.append(label);
-    const parallelLabel=el('label','','同時照合 '),parallelSelect=el('select');
-    parallelSelect.setAttribute('aria-label','中古価格の同時照合件数');
-    for(let i=1;i<=3;i++){const option=el('option','',`${i}件`);option.value=String(i);parallelSelect.append(option);}
-    parallelSelect.value=String(Math.min(3,Math.max(1,Number(settings.amtkPriceConcurrency)||2)));
-    parallelSelect.addEventListener('change',()=>chrome.storage.sync.set({amtkPriceConcurrency:Number(parallelSelect.value)}));
-    parallelLabel.append(parallelSelect);actions.append(parallelLabel);
+    actions.append(el('small','','軽量モード：中古価格は1件ずつ照合'));
+    if(!priceOptIn&&!userPaused)actions.append(btn('▶ 中古価格の照合を開始',resumePriceChecks,'amtk-wl-primary'));
     actions.append(btn(fetchingDescriptions?'■ 全収集を停止':'📖 説明文をまとめて取得（30件）',()=>{if(fetchingDescriptions)stopAll();else void bulkDescriptions();},'amtk-wl-primary'));
     actions.append(btn(collecting?'■ 全収集を停止':'↓ 全件収集を試す',()=>{if(collecting)stopAll();else void gatherAll();},'amtk-wl-primary'));
     if(userPaused)actions.append(btn('▶ 中古価格照合を再開',resumePriceChecks,'amtk-wl-primary'));
@@ -843,7 +868,7 @@
     actions.append(btn('Claude ↗',()=>openAI('https://claude.ai/new')));
     actions.append(btn(nativeVisible?'オリジナル表示を閉じる':'Amazon元の表示',()=>{setNativeVisibility(!nativeVisible);lastSignature='';drawSoon();},'amtk-wl-native-btn'));
     head.append(actions);panel.append(head);
-    const line=el('div','amtk-wl-status',collectionLog||lastError||'画面に読み込まれた商品の中古出品情報を自動照合します。取得できない商品は理由を表示します。');line.id='amtk-wl-status';panel.append(line);
+    const line=el('div','amtk-wl-status',collectionLog||lastError||'軽量モード：60件ずつ表示。中古価格は開始ボタンを押すまで通信しません。');line.id='amtk-wl-status';panel.append(line);
     const finder=el('div','amtk-wl-finder');
     const query=el('input','amtk-wl-query');query.type='search';query.id='amtk-wl-query';
     query.placeholder='商品名・タグ・価格などで検索';query.setAttribute('aria-label','ほしい物リスト内を検索');
@@ -915,11 +940,15 @@
     setNativeVisibility(nativeVisible);
   }
   function drawSoon(){clearTimeout(renderTimer);renderTimer=setTimeout(draw,260);}
-  function scheduleScan(){clearTimeout(renderTimer);renderTimer=setTimeout(()=>{scan();draw();},380);}
+  function scheduleScan(){
+    if(document.hidden||scanTimer)return;
+    scanTimer=setTimeout(()=>{scanTimer=0;if(document.hidden)return;getListSwitch();scan();draw();},700);
+  }
   function getListSwitch(){
     const id=currentListId();
     if(id===currentId)return;
     currentId=id;
+    pausePriceWork();gridPage=0;lastFilterKey='';
     filterText='';filterMode='all';aiMatches=null;aiQuery='';
     priceQueue=[];queueSet.clear();
     entries=new Map((cache[id]?.items||[]).filter(x=>x?.id&&x?.title).map(x=>[x.id,x]));
@@ -939,14 +968,14 @@
         }
         if(area==='sync'){
           for(const k of Object.keys(defaults))if(changes[k])settings[k]=changes[k].newValue;
+          if(!settings.amtkWishlistEnabled||!settings.amtkAutoUsedEnabled)pausePriceWork();
           lastSignature='';drawSoon();scheduleAutoPrices();
         }
       });
       new MutationObserver(mutations=>{
-        const pageChanged=mutations.some(m=>!m.target?.closest?.('#amtk-wishlist-panel') && !m.target?.closest?.('#amtk-wl-modal') && !m.target?.closest?.('#amtk-wl-floating-stop') &&
-          ![...m.addedNodes].every(n=>n.nodeType===1&&(n.id==='amtk-wishlist-panel'||n.id==='amtk-wl-floating-stop'||n.closest?.('#amtk-wishlist-panel')||n.closest?.('#amtk-wl-floating-stop'))));
-        if(!pageChanged)return;
-        getListSwitch();scheduleScan();
+        const nativeChanged=mutations.some(m=>m.target?.closest?.('#g-items') ||
+          [...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1 && (n.id==='g-items'||n.querySelector?.('#g-items'))));
+        if(nativeChanged||currentListId()!==currentId)scheduleScan();
       }).observe(document.documentElement,{childList:true,subtree:true});
       document.addEventListener('visibilitychange',()=>{if(!document.hidden){getListSwitch();scheduleScan();scheduleAutoPrices();}});
     }catch(err){console.warn('Amazon Toolkit wishlist initialization:',err);}
